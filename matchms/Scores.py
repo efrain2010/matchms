@@ -1,6 +1,4 @@
 from __future__ import annotations
-from typing import List
-from typing import Tuple
 import numpy
 from matchms.typing import QueriesType
 from matchms.typing import ReferencesType
@@ -47,9 +45,9 @@ class Scores:
     .. testoutput::
 
         Cosine score between spectrum1 and spectrum3 is 0.00 with 0 matched peaks
-        Cosine score between spectrum1 and spectrum4 is 0.68 with 3 matched peaks
-        Cosine score between spectrum2 and spectrum3 is 0.10 with 1 matched peaks
-        Cosine score between spectrum2 and spectrum4 is 0.33 with 1 matched peaks
+        Cosine score between spectrum1 and spectrum4 is 0.80 with 3 matched peaks
+        Cosine score between spectrum2 and spectrum3 is 0.14 with 1 matched peaks
+        Cosine score between spectrum2 and spectrum4 is 0.61 with 1 matched peaks
     """
     def __init__(self, references: ReferencesType, queries: QueriesType, similarity_function: SimilarityFunction):
         """
@@ -94,10 +92,10 @@ class Scores:
 
     @staticmethod
     def _validate_input_arguments(references, queries, similarity_function):
-        assert isinstance(references, (List, Tuple, numpy.ndarray)),\
+        assert isinstance(references, (list, tuple, numpy.ndarray)),\
             "Expected input argument 'references' to be list or tuple or numpy.ndarray."
 
-        assert isinstance(queries, (List, Tuple, numpy.ndarray)),\
+        assert isinstance(queries, (list, tuple, numpy.ndarray)),\
             "Expected input argument 'queries' to be list or tuple or numpy.ndarray."
 
         assert callable(similarity_function), "Expected input argument 'similarity_function' to be callable."
