@@ -1,14 +1,10 @@
 from typing import Generator
-from typing import List
 import numpy
 from ..Spectrum import Spectrum
 
 
-def parse_msp_file(filename: str) -> List[dict]:
+def parse_msp_file(filename: str) -> Generator[dict, None, None]:
     """Read msp file and parse info in list of spectrum dictionaries."""
-
-    # List that will contain all the differente "spectrums"
-    spectrums = []
 
     # Lists/dicts that will contain all params, masses and intensities of each molecule
     params = {}
@@ -50,46 +46,45 @@ def parse_msp_file(filename: str) -> List[dict]:
                 # Obtaining the masses and intensities
                 if int(params['num peaks']) == peakscount:
                     peakscount = 0
-                    spectrums.append(
-                        {
-                            'params': params,
-                            'm/z array': numpy.array(masses, dtype="float"),
-                            'intensity array': numpy.array(intensities, dtype="float")
-                        }
-                    )
+                    yield {
+                        'params': (params),
+                        'm/z array': numpy.array(masses),
+                        'intensity array': numpy.array(intensities)
+                    }
+
                     params = {}
                     masses = []
                     intensities = []
 
-    return spectrums
-
 
 def load_from_msp(filename: str) -> Generator[Spectrum, None, None]:
     """
-    MSP file to a Spectrum object
+    MSP file to a :py:class:`~matchms.Spectrum.Spectrum` objects
     Function that reads a .msp file and converts the info
-    in Spectrum objects.
-    Parameters
-    ----------
-    filename : str
-        path of the msp file
-    Returns
-    -------
-    Spectrum
+    in :py:class:`~matchms.Spectrum.Spectrum` objects.
+
+    Args:
+        filename: path of the msp file
+
+    Yields:
         Yield a spectrum object with the data of the msp file
 
+
     Example:
+
     .. code-block:: python
 
-    from matchms.importing import load_from_msp
+        from matchms.importing import load_from_msp
 
-    spectrum = load_from_msp("MoNA-export-GC-MS-first10.msp")
+        # Download msp file from MassBank of North America repository at https://mona.fiehnlab.ucdavis.edu/
+
+        spectrum = next(load_from_msp("MoNA-export-GC-MS-first10.msp"))
     """
 
-    for pyteomics_spectrum in parse_msp_file(filename):
-        metadata = pyteomics_spectrum.get("params", None)
-        mz = pyteomics_spectrum["m/z array"]
-        intensities = pyteomics_spectrum["intensity array"]
+    for spectrum in parse_msp_file(filename):
+        metadata = spectrum.get("params", None)
+        mz = spectrum["m/z array"]
+        intensities = spectrum["intensity array"]
 
         # Sort by mz (if not sorted already)
         if not numpy.all(mz[:-1] <= mz[1:]):
