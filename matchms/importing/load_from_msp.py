@@ -52,9 +52,9 @@ def parse_msp_file(filename: str) -> List[dict]:
                     peakscount = 0
                     spectrums.append(
                         {
-                            'params': (params),
-                            'm/z array': numpy.array(masses),
-                            'intensity array': numpy.array(intensities)
+                            'params': params,
+                            'm/z array': numpy.array(masses, dtype="float"),
+                            'intensity array': numpy.array(intensities, dtype="float")
                         }
                     )
                     params = {}
