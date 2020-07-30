@@ -1,15 +1,11 @@
 """Test function to collect matching peaks. Run tests both on numba compiled and
 pure Python version."""
 import numpy
-import pytest
-from matchms.similarity.collect_peak_pairs import collect_peak_pairs
+from matchms.similarity.spectrum_similarity_functions import collect_peak_pairs
 
 
-@pytest.mark.parametrize("shift, expected_pairs",
-                         [(0.0, [(2, 2, 1.0), (3, 3, 1.0)]),
-                          (-5.0, [(0, 0, 0.01), (1, 1, 0.01)])])
-def test_cosine_hungarian_compiled(shift, expected_pairs):
-    """Test finding expected peak matches for given tolerance."""
+def test_collect_peak_pairs_no_shift():
+    """Test finding expected peak matches within tolerance=0.2."""
     spec1 = numpy.array([[100, 200, 300, 500],
                          [0.1, 0.1, 1.0, 1.0]], dtype="float").T
 
@@ -21,11 +17,8 @@ def test_cosine_hungarian_compiled(shift, expected_pairs):
     assert matching_pairs == [pytest.approx(x, 1e-9) for x in expected_pairs], "Expected different pairs."
 
 
-@pytest.mark.parametrize("shift, expected_pairs",
-                         [(0.0, [(2, 2, 1.0), (3, 3, 1.0)]),
-                          (-5.0, [(0, 0, 0.01), (1, 1, 0.01)])])
-def test_cosine_hungarian(shift, expected_pairs):
-    """Test finding expected peak matches for tolerance=0.2 and given shift."""
+def test_collect_peak_pairs_shift_min5():
+    """Test finding expected peak matches when given a mass_shift of -5.0."""
     spec1 = numpy.array([[100, 200, 300, 500],
                          [0.1, 0.1, 1.0, 1.0]], dtype="float").T
 
